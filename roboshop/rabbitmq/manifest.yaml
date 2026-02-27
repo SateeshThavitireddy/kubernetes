@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: roboshop
+spec:
+  replicas: 1
+  selector:
+  matchLabels:
+    project: roboshop
+    component: rabbitmq
+    tier: backend
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        component: rabbitmq
+        tier: backend
+    spec:
+      containers:
+         - name: rabbitmq
+           image: rabbitmq:3-management
+           imagePullPolicy: Always
+           ports:
+              -name: liveness
+               containerPort: 15672
+           envFrom:
+              - configMapREf:
+                    name: rabbitm1-configmap
+            readinessProbe:
+              tcpSocket:
+                port: 15672
+                initialDelaySeconds: 15
+                periodSeconds: 20
+            livenessProbe:
+              tcpSocket:
+                port: 15672
+                initialDelaySeconds: 15
+                periodSeconds: 20
+                failureThreshold: 2 

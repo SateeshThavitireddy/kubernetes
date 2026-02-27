@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: roboshop
+  labels:
+    project: roboshop
+    component: mongodb
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+    project: roboshop
+    component: mongodb
+    tier: database
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        component: mongodb
+        tier: database
+    spec:
+      containers:
+        - name: mongodb
+          image: joindevops/mongodb:v1
+          imagePullPolicy: Always
+        readinessProbe:
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          failureThreshold: 2
+        livenessProbe:
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 20
+          periodSeconds: 20
+          failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: roboshop
+spec:
+  selector:
+    labels:
+      project: roboshop
+      component: mongodb
+      tier: database
+    ports:
+      - protocol: TCP
+        port: 27017
+        targetPort: 27017

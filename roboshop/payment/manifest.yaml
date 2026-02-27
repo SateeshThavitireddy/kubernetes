@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  namespace: roboshop
+  labels:
+    project: roboshop
+    component: payment
+    tier: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: roboshop
+      component: payment
+      tier: payment
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        component: payment
+        tier: payment
+    spec:
+      containers:
+        - name: payment
+          image: roboshop/payment:1.0
+          ports:
+            - name: liveness-port
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: payment-configmap
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3

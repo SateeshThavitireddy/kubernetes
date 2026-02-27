@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: roboshop
+  labels:
+    name: roboshop
+    environment: production
+    team: devops
+  annotations:
+    description: "This is the namespace for the Roboshop application"

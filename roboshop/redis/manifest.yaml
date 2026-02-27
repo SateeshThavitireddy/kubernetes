@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: roboshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: roboshop
+      component: redis
+      tier: database
+    template:
+      metadata:
+        labels:
+          project: roboshop
+          component: redis
+          tier: database
+      spec:
+        containers:
+          - name: redis
+            image: redis:latest
+            imagePullPolicy: Always
+            readinessProbe:
+              tcpSocket:
+                port: 6379
+              intialDelaySeconds: 10
+              periodSeconds: 5
+            livenessProbe:
+              tcpSocket:
+                port: 6379
+              intialDelaySeconds: 30
+              periodSeconds: 10
